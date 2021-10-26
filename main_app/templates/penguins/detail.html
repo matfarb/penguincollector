@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+<h1>Penguin Details</h1>
+
+<div class="row">
+    <div class="col s6">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">{{ penguin.name }}</span>
+                <p>Breed: {{ penguin.breed }}</p>
+                <p>Description: {{ penguin.description }}</p>
+                {% if penguin.age > 0 %}
+                <p>Age: {{ penguin.age }}</p>
+                {% else %}
+                <p>Age: Lil' Penguin</p>
+                {% endif %}
+            </div>
+            <div class="card-action">
+                <a class="blue-text lighten-3" href="{% url 'penguins_update' penguin.id %}">Edit</a>
+                <a class="blue-text lighten-3" href="{% url 'penguins_delete' penguin.id %}">Delete</a>
+            </div>
+        </div>
+        {% for photo in penguin.photo_set.all %}
+            <img class="responsive-img card-panel blue-text lighten-3" src="{{photo.url}}">
+        {% empty %}
+            <div class="card-panel center-align blue-text lighten-3">No Photos Uploaded</div>
+        {% endfor %}
+        <form action="{% url 'add_photo' penguin.id %}" enctype="multipart/form-data" method="POST" class="card-panel">
+            {% csrf_token %}
+            <input type="file" name="photo-file">
+            <br><br>
+            <input type="submit" class="btn blue lighten-3" value="Upload Photo">
+        </form>
+    </div>
+    <div class="col s6">
+        <form action="{% url 'add_swimming' penguin.id %}" method="post">
+            {% csrf_token %}
+            {{ swimming_form.as_p}}
+            <input type="submit" class="btn blue lighten-3" value="Add Swim Time">
+        </form>
+        <br>
+        {% if penguin.swam_today %}
+            <div class="card-panel blue-text lighten-3 center-align">{{penguin.name}} has swam enough for today</div>
+        {% else %}
+            <div class="card-panel red-text center-align">{{penguin.name}} wants to swim</div>
+        {% endif %}
+        <table class="striped">
+            <thead>
+                <tr><th>Date</th><th>Time</th></tr>
+            </thead>
+            <tbody>
+                {% for swimming in penguin.swimming_set.all %}
+                    <tr>
+                        <td>{{swimming.date}}</td>
+                        <td>{{swimming.get_time_display}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col s6">
+    <h3>{{ penguin.name }}'s Clothes</h3>
+    {% if penguin.clothes.count %}
+      {% for clothes in penguin.clothes.all %}
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              A <span style="color: {{ clothes.color }}">{{ clothes.color }}</span> {{ clothes.name }}
+            </span>
+          </div>
+          <div class="card-action">
+            <form action="{% url 'unassoc_clothes' penguin.id clothes.id %}" method="post">
+                {% csrf_token %}
+              <button type="submit" class="btn red darken-3">Remove</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <h5>No Clothes :(</h5>
+    {% endif %}
+  </div>
+  <div class="col s6">
+    <h3>Available Clothes</h3>
+    {% if clothes.count %}
+      {% for clothes in clothes.all %}
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              A <span style="color: {{ clothes.color }}">{{ clothes.color }}</span> {{ clothes.name }}
+            </span>
+          </div>
+          <div class="card-action">
+            <form action="{% url 'assoc_clothes' penguin.id clothes.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn blue lighten-3">Add</button>
+            </form>
+          </div>
+        </div>
+        
+      {% endfor %}
+    {% else %}
+      <h5>{{penguin.name}} Already Has All clothes Available</h5>
+    {% endif %}
+  </div>
+</div>
+<script>
+    var dateEl = document.getElementById('id_date');
+    M.Datepicker.init(dateEl, {
+        format: 'yyyy-mm-dd',
+        defaultDate: new Date(),
+        setDefaultDate: true,
+        autoClose: true
+    });
+
+    var selectEl = document.getElementById('id_time');
+    M.FormSelect.init(selectEl);
+</script>
+
+{% endblock %}

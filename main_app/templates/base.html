@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Penguin Collector</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper blue lighten-3">
+        <ul>
+          <li><a href="/" class="left brand-logo">&nbsp;&nbsp;Penguin Collector</a></li>
+        </ul>
+        <ul class="right">
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'about' %}">About</a></li>  
+            <li><a href="{% url 'clothes_create' %}">Add Clothes</a></li>
+            <li><a href="{% url 'clothes_index' %}">View All Clothes</a></li>
+            <li><a href="{% url 'penguins_create' %}">Add a Penguin</a></li>
+            <li><a href="{% url 'index' %}">View All My Penguins</a></li>
+            <li><a href="{% url 'logout' %}">Log Out</a></li>
+          {% else %}
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Log In</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main class="container">
+    {% block content %}
+    {% endblock %}
+  </main>
+  <footer class="page-footer blue lighten-3">
+    <div class="right">All Rights Reserved, &copy; 2021 Penguin Collector &nbsp;</div>
+  </footer>
+</body>
+</html>

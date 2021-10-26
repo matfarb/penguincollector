@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Penguin List</h1>
+
+{% for penguin in penguins %}
+  <div class="card">
+    <a href="{% url 'detail' penguin.id %}">
+        <div class="card-content">
+            <span class="card-title">{{ penguin.name }}</span>
+            <p>Breed: {{ penguin.breed }}</p>
+            <p>Description: {{ penguin.description }}</p>
+            {% if penguin.age > 0 %}
+                <p>Age: {{ penguin.age }}</p>
+            {% else %}
+                <p>Age: Lil' Penguin</p>
+            {% endif %}
+        </div>
+    </a>
+  </div>
+{% endfor %}
+
+{% endblock %}
